@@ -3,7 +3,9 @@ import { v4 as uuidv4 } from 'crypto';
 import { db } from '@/db';
 import { meals } from '@/db/schema';
 import { eq, and, gte, lte } from 'drizzle-orm';
+import { users } from '@/db/schema';
 import { authMiddleware, type AuthRequest } from '@/middleware/auth';
+import { sendCalorieGoalAlert } from '@/services/email';
 
 const router = Router();
 
@@ -62,6 +64,21 @@ router.post('/', authMiddleware, async (req: AuthRequest, res) => {
     const newMeal = await db.query.meals.findFirst({
       where: eq(meals.id, mealId),
     });
+
+    // Check if meal reached daily goal
+    const allMeals = await db.query.meals.findMany({
+      where: and(eq(meals.userId, req.userId!), eq(meals.date, date)),
+    });
+    const totalCalories = allMeals.reduce((sum, m) => sum + m.calories, 0);
+    const user = await db.query.users.findFirst({
+      where: eq(users.id, req.userId!),
+    });
+
+    if (user && totalCalories >= user.dailyCalorieGoal && totalCalories - calories < user.dailyCalorieGoal) {
+      sendCalorieGoalAlert(user.email, user.email.split('@')[0], totalCalories, user.dailyCalorieGoal).catch(
+        err => console.error('Email error:', err)
+      );
+    }
 
     res.status(201).json(newMeal);
   } catch (error) {

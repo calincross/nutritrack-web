@@ -6,6 +6,7 @@ import { db } from '@/db';
 import { users } from '@/db/schema';
 import { eq } from 'drizzle-orm';
 import { authMiddleware, type AuthRequest } from '@/middleware/auth';
+import { sendWelcomeEmail } from '@/services/email';
 
 const router = Router();
 
@@ -37,6 +38,10 @@ router.post('/register', async (req, res) => {
       email,
       password: hashedPassword,
     });
+
+    // Send welcome email
+    const userName = email.split('@')[0];
+    sendWelcomeEmail(email, userName).catch(err => console.error('Email error:', err));
 
     // Generate token
     const token = jwt.sign({ userId }, process.env.JWT_SECRET || 'your-secret-key', {
