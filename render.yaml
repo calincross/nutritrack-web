@@ -1,0 +1,51 @@
+services:
+  # Frontend Service
+  - type: web
+    name: nutritrack-frontend
+    env: static
+    buildCommand: cd . && pnpm install && pnpm build
+    staticPublishPath: ./dist
+    envVars:
+      - key: VITE_API_URL
+        value: https://nutritrack-backend.onrender.com/api
+
+  # Backend Service
+  - type: web
+    name: nutritrack-backend
+    env: node
+    region: oregon
+    plan: free
+    buildCommand: cd server && pnpm install && pnpm build
+    startCommand: cd server && pnpm start
+    envVars:
+      - key: PORT
+        value: 3000
+      - key: JWT_SECRET
+        generateValue: true
+      - key: DB_HOST
+        fromDatabase:
+          name: nutritrack-db
+          property: host
+      - key: DB_USER
+        fromDatabase:
+          name: nutritrack-db
+          property: user
+      - key: DB_PASSWORD
+        fromDatabase:
+          name: nutritrack-db
+          property: password
+      - key: DB_NAME
+        value: nutritrack
+      - key: EMAIL_USER
+        sync: false
+      - key: EMAIL_PASSWORD
+        sync: false
+      - key: EMAIL_FROM
+        value: noreply@nutritrack.com
+
+  # Database Service
+  - type: pserv
+    name: nutritrack-db
+    plan: free
+    ipAllowList: []
+    postgresMajorVersion: 15
