@@ -1,22 +1,22 @@
 services:
-  # Frontend Service
+  # Frontend Service - Static Site
   - type: web
     name: nutritrack-frontend
     env: static
-    buildCommand: cd . && pnpm install && pnpm build
+    buildCommand: pnpm install && pnpm build
     staticPublishPath: ./dist
     envVars:
       - key: VITE_API_URL
         value: https://nutritrack-backend.onrender.com/api
 
-  # Backend Service
+  # Backend Service - Node.js
   - type: web
     name: nutritrack-backend
     env: node
     region: oregon
     plan: free
     buildCommand: cd server && pnpm install && pnpm build
-    startCommand: cd server && pnpm start
+    startCommand: cd server && node dist/index.js
     envVars:
       - key: PORT
         value: 3000
@@ -37,4 +37,3 @@ services:
   - type: pserv
     name: nutritrack-db
     plan: free
-    ipAllowList: []
