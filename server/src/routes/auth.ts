@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { v4 as uuidv4 } from 'crypto';
+import { randomUUID } from 'crypto';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import { db } from '@/db';
@@ -9,6 +9,10 @@ import { authMiddleware, type AuthRequest } from '@/middleware/auth';
 import { sendWelcomeEmail } from '@/services/email';
 
 const router = Router();
+
+function uuidv4() {
+  return randomUUID();
+}
 
 // Register
 router.post('/register', async (req, res) => {
