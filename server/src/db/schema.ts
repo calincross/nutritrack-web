@@ -1,5 +1,5 @@
 import { mysqlTable, varchar, int, text, datetime, boolean, decimal } from 'drizzle-orm/mysql-core';
-import { relations } from 'drizzle-orm';
+import { relations, sql } from 'drizzle-orm';
 
 export const users = mysqlTable('users', {
   id: varchar('id', { length: 36 }).primaryKey(),
@@ -7,8 +7,8 @@ export const users = mysqlTable('users', {
   password: varchar('password', { length: 255 }).notNull(),
   dailyCalorieGoal: int('daily_calorie_goal').default(2000),
   dietType: varchar('diet_type', { length: 50 }).default('balanced'),
-  createdAt: datetime('created_at').defaultNow(),
-  updatedAt: datetime('updated_at').defaultNow(),
+  createdAt: datetime('created_at').default(sql`CURRENT_TIMESTAMP`),
+  updatedAt: datetime('updated_at').default(sql`CURRENT_TIMESTAMP`),
 });
 
 export const meals = mysqlTable('meals', {
@@ -20,7 +20,7 @@ export const meals = mysqlTable('meals', {
   date: varchar('date', { length: 10 }).notNull(), // YYYY-MM-DD
   time: varchar('time', { length: 5 }).notNull(), // HH:MM
   notes: text('notes'),
-  createdAt: datetime('created_at').defaultNow(),
+  createdAt: datetime('created_at').default(sql`CURRENT_TIMESTAMP`),
 });
 
 export const recipes = mysqlTable('recipes', {
@@ -30,8 +30,8 @@ export const recipes = mysqlTable('recipes', {
   ingredients: text('ingredients').notNull(), // JSON stringified array
   instructions: text('instructions').notNull(),
   caloriesPerServing: int('calories_per_serving').notNull(),
-  createdAt: datetime('created_at').defaultNow(),
-  updatedAt: datetime('updated_at').defaultNow(),
+  createdAt: datetime('created_at').default(sql`CURRENT_TIMESTAMP`),
+  updatedAt: datetime('updated_at').default(sql`CURRENT_TIMESTAMP`),
 });
 
 export const documents = mysqlTable('documents', {
@@ -41,7 +41,7 @@ export const documents = mysqlTable('documents', {
   type: varchar('type', { length: 50 }).notNull(), // 'diet-plan' or 'consultation'
   url: varchar('url', { length: 500 }).notNull(),
   size: int('size').notNull(),
-  createdAt: datetime('created_at').defaultNow(),
+  createdAt: datetime('created_at').default(sql`CURRENT_TIMESTAMP`),
 });
 
 // Relations
