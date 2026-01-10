@@ -1,11 +1,15 @@
 import { Router } from 'express';
-import { v4 as uuidv4 } from 'crypto';
+import { randomUUID } from 'crypto';
 import { db } from '@/db';
 import { recipes } from '@/db/schema';
 import { eq, and, like } from 'drizzle-orm';
 import { authMiddleware, type AuthRequest } from '@/middleware/auth';
 
 const router = Router();
+
+function uuidv4() {
+  return randomUUID();
+}
 
 // Get all recipes for user
 router.get('/', authMiddleware, async (req: AuthRequest, res) => {
