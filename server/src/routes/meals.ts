@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { v4 as uuidv4 } from 'crypto';
+import { randomUUID } from 'crypto';
 import { db } from '@/db';
 import { meals } from '@/db/schema';
 import { eq, and, gte, lte } from 'drizzle-orm';
@@ -8,6 +8,10 @@ import { authMiddleware, type AuthRequest } from '@/middleware/auth';
 import { sendCalorieGoalAlert } from '@/services/email';
 
 const router = Router();
+
+function uuidv4() {
+  return randomUUID();
+}
 
 // Get all meals for user
 router.get('/', authMiddleware, async (req: AuthRequest, res) => {
