@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { v4 as uuidv4 } from 'crypto';
+import { randomUUID } from 'crypto';
 import { db } from '@/db';
 import { documents } from '@/db/schema';
 import { eq, and } from 'drizzle-orm';
@@ -7,6 +7,10 @@ import { authMiddleware, type AuthRequest } from '@/middleware/auth';
 import upload from '@/middleware/upload';
 
 const router = Router();
+
+function uuidv4() {
+  return randomUUID();
+}
 
 // Get all documents for user
 router.get('/', authMiddleware, async (req: AuthRequest, res) => {
